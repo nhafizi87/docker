@@ -1,0 +1,35 @@
+version: '2.0'
+
+services:
+  web:
+    container_name: "devcis-server"
+    image: "devcis:1.0"
+    volumes:
+      - "./www/html:/var/www/html"
+    ports:
+      - "8000:80"
+    build:
+      context: ./webserver
+      dockerfile: "app"
+      args:
+        buildno: 1
+    ulimits:
+      nproc: 25059
+      nofile:
+        soft: 65535
+        hard: 65535
+    links:
+      - "db"
+    stdin_open: true
+    tty: true
+    
+  db:
+    container_name: "devcis-db"
+    image: mariadb:10.1.19
+    volumes:
+      - "./db:/var/lib/mysql/"
+    ports:
+      - "4407:3306"
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
